@@ -47,3 +47,54 @@ Input validation
 
 Provenance
 ~~~~~~~~~~
+
+Draft objects needed
+~~~~~~~~~~~~~~~~~~~~
+
+Cell object
+
+Connection object
+
+Draft method signatures
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Cell.getLineageName()
+
+Cell.getDaughters()
+
+Cell.getParentCell()
+
+Cell.getReferences()
+
+Cell.getReferences([arguments])
+
+Cell.getDivisionVolume()
+
+Neuron.add_reference()
+
+Neuron.get_connections()
+
+Neuron.get_neighbors()
+
+"""Get a NeuroML object that represents this neuron  
+		
+		   :param type: How verbose of a neuroml object do you want  
+		                0=full morphology+biophysics, 1=cell body only+biophysics, 2=full morphology only
+		   :returns: Computational model of this neuron encoded in NeuroML
+		   :rtype: neuroml object
+"""
+Neuron.as_neuroml([arguments])
+
+Connection.get_synapse_type()
+
+Connection.get_neurotransmitter()
+
+Connection.get_strength()
+
+Adding data for existing methods that aren't populated yet
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Neuron.receptors()
+
+Neuron.get_reference()
+
