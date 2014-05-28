@@ -62,3 +62,53 @@ Miscellaneous
 Versioning
 ~~~~~~~~~~
 Experimental methods are constantly improving in biological research. These improvements may require updating the data we reference or store internally. However, in making updates we must not immediately expunge older content, breaking links created by internal and external agents. Ideally we would have a means of deprecating old data and specifying replacements. On the level of single resources, this is a trivial mapping which may be done transparently to all readers. For a more significant change, altering the schema, human intervention may be required to update external readers.
+
+Draft objects needed
+~~~~~~~~~~~~~~~~~~~~
+
+Cell object
+
+Connection object
+
+Draft method signatures
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Cell.getLineageName()
+
+Cell.getDaughters()
+
+Cell.getParentCell()
+
+Cell.getReferences()
+
+Cell.getReferences([arguments])
+
+Cell.getDivisionVolume()
+
+Neuron.add_reference()
+
+Neuron.get_connections()
+
+Neuron.get_neighbors()
+
+"""Get a NeuroML object that represents this neuron  
+		
+		   :param type: How verbose of a neuroml object do you want  
+		                0=full morphology+biophysics, 1=cell body only+biophysics, 2=full morphology only
+		   :returns: Computational model of this neuron encoded in NeuroML
+		   :rtype: neuroml object
+"""
+Neuron.as_neuroml([arguments])
+
+Connection.get_synapse_type()
+
+Connection.get_neurotransmitter()
+
+Connection.get_strength()
+
+Adding data for existing methods that aren't populated yet
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Neuron.receptors()
+
+Neuron.get_reference()
