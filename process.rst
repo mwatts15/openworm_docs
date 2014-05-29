@@ -72,33 +72,82 @@ Connection object
 
 Draft method signatures
 ~~~~~~~~~~~~~~~~~~~~~~~
+Of course, when these methods communicate with an external database, they may fail due to the database being unavailable and the user should be notified if a connection cannot be established in a reasonable time. Also, some objects are created by querying the database; these may be made out-of-date in that case
 
-Cell.getLineageName()
+Evidence
 
-Cell.getDaughters()
+A representation of some document which provides evidence for something.  
 
-Cell.getParentCell()
+Evidence.asserts(relationship)
 
-Cell.getReferences()
+    State that the Evidence asserts that relationship is true. A Relationship can be provided or a triple ( . , Relationship, . )
+    Example:
+        import bibtex
+        bt = bibtex.parse("my.bib")
+        n1 = Neuron("AVAL")
+        n2 = Neuron("DA3")
+        c = Connection(pre=n1,post=n2,class="synapse")
+        e = Evidence(bt['white86'])
+        e.asserts(c)
+    Or:
+        c = Connection()
+        e = Evidence(bt['white86'])
+        e.asserts((n1,c,n2))
+    Example:
+        n1 = Neuron("AVAL")
+        c = Connection()
+        e = Evidence(bt['white86'])
+        e.asserts((n1,c,n2))
 
-Cell.getReferences([arguments])
+Evidence.asserts()
 
-Cell.getDivisionVolume()
+    Returns sequence of statements (triples) asserted by this evidence
+    Example:
+        import bibtex
+        bt = bibtex.parse("my.bib")
+        n1 = Neuron("AVAL")
+        n2 = Neuron("DA3")
+        c = Connection(pre=n1,post=n2,class="synapse")
+        e = Evidence(bt['white86'])
+        e.asserts(c)
+        list(e.asserts()) # Returns a list [..., d, ...] such that d==e
 
-Neuron.add_reference()
+Cell.lineageName()
+
+    Return the lineage name
+    Example:
+        c = Cell(name="ADAL")
+        c.lineageName() # Returns "AB plapaaaapp"
+
+Cell.parentOf()
+
+    Return the direct children of the cell
+    Example:
+        c = Cell(lineageName="AB plapaaaap")
+        c.parentOf() # Returns ["AB plapaaaapp","AB plapaaaapa"]
+
+Cell.daughterOf()
+
+    Return the parent(s) of the cell (multiplicity may result from uncertainty)
+    Example:
+        c = Cell(lineageName="AB plapaaaap")
+        c.daughterOf() # Returns ["AB plapaaaa"]
+
+Cell.divisionVolume()
 
 Neuron.get_connections()
+Get a set of Connection objects describing synapses between this neuron and others
 
 Neuron.get_neighbors()
+Get the neighboring neurons
 
-"""Get a NeuroML object that represents this neuron  
+Neuron.as_neuroml([arguments])
+Get a NeuroML object that represents this neuron  
 		
 		   :param type: How verbose of a neuroml object do you want  
 		                0=full morphology+biophysics, 1=cell body only+biophysics, 2=full morphology only
 		   :returns: Computational model of this neuron encoded in NeuroML
 		   :rtype: neuroml object
-"""
-Neuron.as_neuroml([arguments])
 
 Connection.get_synapse_type()
 
