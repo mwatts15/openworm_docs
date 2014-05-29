@@ -63,16 +63,22 @@ Versioning
 ~~~~~~~~~~
 Experimental methods are constantly improving in biological research. These improvements may require updating the data we reference or store internally. However, in making updates we must not immediately expunge older content, breaking links created by internal and external agents. Ideally we would have a means of deprecating old data and specifying replacements. On the level of single resources, this is a trivial mapping which may be done transparently to all readers. For a more significant change, altering the schema, human intervention may be required to update external readers.
 
-Draft objects needed
-~~~~~~~~~~~~~~~~~~~~
+Draft API
+---------
+
+Objects needed
+~~~~~~~~~~~~~~
 
 Cell object
 
 Connection object
 
-Draft method signatures
-~~~~~~~~~~~~~~~~~~~~~~~
-Of course, when these methods communicate with an external database, they may fail due to the database being unavailable and the user should be notified if a connection cannot be established in a reasonable time. Also, some objects are created by querying the database; these may be made out-of-date in that case
+This API is based on the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()`` (the Query form) will query ``$a $B ?x`` against the database, where ``$a`` and ``$B`` signify identifiers associated with ``a`` and ``B``; on the other hand, ``a.B(c)`` (the Update form) will return a triple from the database, adding it if it isn't already there. However, this is `only` to give an intuition -- for instance, insertions may be refused where they contradict some facts, and the objects returned from either the Query or Update forms may be complex objects.
+
+Notes
+
+ -  Of course, when these methods communicate with an external database, they may fail due to the database being unavailable and the user should be notified if a connection cannot be established in a reasonable time. Also, some objects are created by querying the database; these may be made out-of-date in that case.
+
 
 Evidence
 
@@ -81,7 +87,9 @@ A representation of some document which provides evidence for something.
 Evidence.asserts(relationship)
 
     State that the Evidence asserts that relationship is true. A Relationship can be provided or a triple ( . , Relationship, . )
-    Example:
+
+    Example::
+
         import bibtex
         bt = bibtex.parse("my.bib")
         n1 = Neuron("AVAL")
@@ -89,20 +97,27 @@ Evidence.asserts(relationship)
         c = Connection(pre=n1,post=n2,class="synapse")
         e = Evidence(bt['white86'])
         e.asserts(c)
-    Or:
+
+    Or::
+
         c = Connection()
         e = Evidence(bt['white86'])
         e.asserts((n1,c,n2))
-    Example:
+    
+    A number of methods return objects which asserts accepts
+    Example::
+
         n1 = Neuron("AVAL")
-        c = Connection()
+        c = n1.neighbor(
         e = Evidence(bt['white86'])
         e.asserts((n1,c,n2))
 
 Evidence.asserts()
 
     Returns sequence of statements (triples) asserted by this evidence
-    Example:
+
+    Example::
+
         import bibtex
         bt = bibtex.parse("my.bib")
         n1 = Neuron("AVAL")
@@ -115,31 +130,56 @@ Evidence.asserts()
 Cell.lineageName()
 
     Return the lineage name
-    Example:
+
+    Example::
+
         c = Cell(name="ADAL")
         c.lineageName() # Returns "AB plapaaaapp"
 
 Cell.parentOf()
 
     Return the direct children of the cell
-    Example:
+    
+    Example::
+
         c = Cell(lineageName="AB plapaaaap")
         c.parentOf() # Returns ["AB plapaaaapp","AB plapaaaapa"]
 
 Cell.daughterOf()
 
     Return the parent(s) of the cell (multiplicity may result from uncertainty)
-    Example:
+
+    Example::
+
         c = Cell(lineageName="AB plapaaaap")
         c.daughterOf() # Returns ["AB plapaaaa"]
 
 Cell.divisionVolume()
 
-Neuron.get_connections()
-Get a set of Connection objects describing synapses between this neuron and others
+    Return the volume of the cell at division
 
-Neuron.get_neighbors()
-Get the neighboring neurons
+    Example::
+
+        c = Cell(lineageName="AB plapaaaap")
+        c.divisionVolume() # Returns a Quantity representing the volume of AB plapaaaap 
+
+Cell.divisionVolume(volume)
+
+    Set the volume of the cell at division
+
+    Example::
+
+        v = Quantity("600","um")
+        c = Cell(lineageName="AB plapaaaap")
+        c.divisionVolume(v)
+
+Neuron.connection()
+
+    Get a set of Connection objects describing synapses between this neuron and others
+
+Neuron.neighbor()
+
+    Get the neighboring Neurons
 
 Neuron.as_neuroml([arguments])
 Get a NeuroML object that represents this neuron  
