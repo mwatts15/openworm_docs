@@ -35,13 +35,14 @@ Or::
     e = Evidence(bibtex=bt['white86'])
     e.asserts((n1,c,n2))
 
-A number of methods return objects which asserts accepts
+A number of methods return objects which asserts accepts.
+
 Example::
 
     n1 = Neuron("AVAL")
-    c = n1.neighbor(
+    c = n1.neighbor("DA3")
     e = Evidence(bibtex=bt['white86'])
-    e.asserts((n1,c,n2))
+    e.asserts(c)
 
 Evidence.asserts()
 ++++++++++++++++++
@@ -55,7 +56,7 @@ Example::
     n1 = Neuron("AVAL")
     n2 = Neuron("DA3")
     c = Connection(pre=n1,post=n2,class="synapse")
-    e = Evidence(bt['white86'])
+    e = Evidence(bibtex=bt['white86'])
     e.asserts(c)
     list(e.asserts()) # Returns a list [..., d, ...] such that d==e
 
@@ -130,8 +131,8 @@ Neuron.neighbor()
 
 Get the neighboring Neurons
 
-Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : { 'gap junction', 'synapse' }  )
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : { 'gap junction', 'synapse' } ] )
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A representation of the connection between neurons. Either a gap junction or a chemical synapse
 
