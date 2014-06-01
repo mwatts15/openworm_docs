@@ -114,7 +114,7 @@ Set the volume of the cell at division
 
 Example::
 
-    v = Quantity("600","um")
+    v = Quantity("600","(um)^3")
     c = Cell(lineageName="AB plapaaaap")
     c.divisionVolume(v)
 
