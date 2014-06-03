@@ -5,10 +5,13 @@ Draft API
 
 This API is based on the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()`` (the Query form) will query ``$a $B ?x`` against the database, where ``$a`` and ``$B`` signify identifiers associated with ``a`` and ``B``; on the other hand, ``a.B(c)`` (the Update form) will return a triple from the database, adding it if it isn't already there. However, this is `only` to give an intuition -- for instance, insertions may be refused where they contradict some facts, and the objects returned from either the Query or Update forms may be complex objects.
 
+The API is for working with biological entities, relationships between entities, and evidence for the relationships.
+
 Notes
 
 - Of course, when these methods communicate with an external database, they may fail due to the database being unavailable and the user should be notified if a connection cannot be established in a reasonable time. Also, some objects are created by querying the database; these may be made out-of-date in that case.
 - Some terms may be unexplained
+- ``a : {x_0,...,x_n}`` means a could have the value of any one of ``x_0`` through ``x_n``
 
 
 Evidence(bibtex : BibtexEntry)
@@ -68,8 +71,8 @@ Cell(name : String)
 A biological cell
 
 
-Cell.lineageName()
-++++++++++++++++++
+Cell.lineageName() : String
+++++++++++++++++++++++++++++++++++++++
 
 Return the lineage name. Multiplicity may result from developmental differences
 
@@ -78,28 +81,28 @@ Example::
     c = Cell(name="ADAL")
     c.lineageName() # Returns ["AB plapaaaapp"]
 
-Cell.parentOf()
-+++++++++++++++
+Cell.parentOf() : ListOf(Cell)
+++++++++++++++++++++++++++++++++
 
 Return the direct children of the cell
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
-    c.parentOf() # Returns ["AB plapaaaapp","AB plapaaaapa"]
+    c.parentOf() # Returns [Cell(lineageName="AB plapaaaapp"),Cell(lineageName="AB plapaaaapa")]
 
-Cell.daughterOf()
-+++++++++++++++++
+Cell.daughterOf() : ListOf(Cell)
+++++++++++++++++++++++++++++++++++
 
 Return the parent(s) of the cell. Multiplicity may result from uncertainty
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
-    c.daughterOf() # Returns ["AB plapaaaa"]
+    c.daughterOf() # Returns [Cell(lineageName="AB plapaaaa")]
 
-Cell.divisionVolume()
-+++++++++++++++++++++
+Cell.divisionVolume() : Quantity
+++++++++++++++++++++++++++++++++++++++
 
 Return the volume of the cell at division
 
@@ -108,7 +111,8 @@ Example::
     c = Cell(lineageName="AB plapaaaap")
     c.divisionVolume() # Returns a Quantity representing the volume of AB plapaaaap 
 
-Cell.divisionVolume(volume)
+Cell.divisionVolume(volume : Quantity) : Relationship
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Set the volume of the cell at division
 
@@ -118,47 +122,99 @@ Example::
     c = Cell(lineageName="AB plapaaaap")
     c.divisionVolume(v)
 
+Cell.morphology() : Morphology
++++++++++++++++++++++++++++++++++++
+
+Return the morphology of the cell
+
+
 Neuron(name : String)
 ~~~~~~~~~~~~~~~~~~~~~
 
 A subclass of Cell
 
-Neuron.connection()
-+++++++++++++++++++
+Neuron.connection() : ListOf(Connection)
++++++++++++++++++++++++++++++++++++++++++++
 
 Get a set of Connection objects describing synapses between this neuron and others
 
-Neuron.neighbor()
-+++++++++++++++++
+Neuron.neighbor() : ListOf(Neuron)
++++++++++++++++++++++++++++++++++++
 
 Get the neighboring Neurons
 
-Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : { 'gap junction', 'synapse' } ] )
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Muscle(name : String) 
+~~~~~~~~~~~~~~~~~~~~~~
+A representation of a muscle cell
+
+Muscle.receptor() : ListOf(Receptor)
+++++++++++++++++++++++++++++++++++++++
+
+Get a list of receptors for this muscle
+
+Muscle.innervatedBy() : ListOf(Neuron)
+++++++++++++++++++++++++++++++++++++++++
+
+Get a list of neurons that synapse on this muscle cell
+
+Muscle.innervatedBy(n : Neuron) : Relationship
++++++++++++++++++++++++++++++++++++++++++++++++
+
+State that the muscle is innervated by n
+
+Signaling(sender : Population, receiver : Population, messengerSpecies : Object )
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Signaling.sender() : Population
++++++++++++++++++++++++++++++++++++++
+
+Signaling.receiver() : Population
++++++++++++++++++++++++++++++++++++++
+
+Signaling.messengerSpecies() : Object
++++++++++++++++++++++++++++++++++++++
+
+Population : SetOf(Cell)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : {'gap junction', 'synapse'} ] )
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A representation of the connection between neurons. Either a gap junction or a chemical synapse
 
-Connection.type()
-+++++++++++++++++
+Connection.type() : {'gap junction', 'synapse'}
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Returns the type of connection: 'gap junction' or 'synapse'
 
-Connection.neurotransmitter()
-+++++++++++++++++++++++++++++
+Connection.type({'gap junction', 'synapse'}) : Relationship
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Returns the type of connection: 'gap junction' or 'synapse'
+
+Connection.neurotransmitter() : Neurotransmitter
++++++++++++++++++++++++++++++++++++++++++++++++++
 Returns the type of neurotransmitter used in the connection
 
-Connection.strength()
-+++++++++++++++++++++
+Connection.strength() : Integer
+++++++++++++++++++++++++++++++++
 Returns the connection strength, the number of synapses made between the neurons
 
 NeuroML
-~~~~~~~
+~~~~~~~~
 
 A utility for generating NeuroML files from other objects. The semantics described `above <#draft-api>`__ do not apply here.
 
-NeuroML.generate(object, type : {0,1,2})
-+++++++++++++++++++++++++++++++++++++++++
+NeuroML.generate(object, type : {0,1,2}) : neuroml.NeuroMLDocument
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Get a NeuroML object that represents the given object. The ``type`` determines what content is included in the NeuroML object:
 0=full morphology+biophysics, 1=cell body only+biophysics, 2=full morphology only
+
+NeuroML.write(document : neuroml.NeuroMLDocument, filename : String) 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Write out a NeuroMLDocument
+
+Simulation
 
