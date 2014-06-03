@@ -1,9 +1,11 @@
 .. _api:
 
-Draft API
----------
+Draft Updates and Modifications to the PyOpenWorm API
+---------------------------------------------------------
 
-This API is based on the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()`` (the Query form) will query ``$a $B ?x`` against the database, where ``$a`` and ``$B`` signify identifiers associated with ``a`` and ``B``; on the other hand, ``a.B(c)`` (the Update form) will return a triple from the database, adding it if it isn't already there. However, this is `only` to give an intuition -- for instance, insertions may be refused where they contradict some facts, and the objects returned from either the Query or Update forms may be complex objects.
+This API will augment the existing API of `PyOpenWorm <https://github.com/openworm/PyOpenWorm/>`_, which is centered around a simple means of accessing data about the c. elegans using an object model that is based on its anatomy.   
+
+Many of these new API calls are designed around the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()`` (the Query form) will query ``$a $B ?x`` against the database, where ``$a`` and ``$B`` signify identifiers associated with ``a`` and ``B``; on the other hand, ``a.B(c)`` (the Update form) will return a triple from the database, adding it if it isn't already there. However, this is `only` to give an intuition -- for instance, insertions may be refused where they contradict some facts, and the objects returned from either the Query or Update forms may be complex objects.
 
 The API is for working with biological entities, relationships between entities, and evidence for the relationships.
 
@@ -45,9 +47,9 @@ A number of methods return objects which asserts accepts.
 Example::
 
     n1 = Neuron("AVAL")
-    c = n1.neighbor("DA3")
+    r = n1.neighbor("DA3")
     e = Evidence(bibtex=bt['white86'])
-    e.asserts(c)
+    e.asserts(r)
 
 Evidence.asserts()
 ++++++++++++++++++
