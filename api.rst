@@ -20,7 +20,7 @@ Evidence(bibtex : BibtexEntry)
 A representation of some document which provides evidence for something.  
 
 Evidence.asserts(relationship : Relationship)
-+++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 State that the Evidence asserts that relationship is true. A Relationship can be provided or a triple ( . , Relationship, . )
 
@@ -63,7 +63,7 @@ Example::
     c = Connection(pre=n1,post=n2,class="synapse")
     e = Evidence(bibtex=bt['white86'])
     e.asserts(c)
-    list(e.asserts()) # Returns a list [..., d, ...] such that d==e
+    list(e.asserts()) # Returns a list [..., d, ...] such that d==c
 
 Cell(name : String)
 ~~~~~~~~~~~~~~~~~~~
@@ -142,6 +142,11 @@ Neuron.neighbor() : ListOf(Neuron)
 +++++++++++++++++++++++++++++++++++
 
 Get the neighboring Neurons
+
+Neuron.neighbor(neuronName : String) : Relationship
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Get the statement that the neuron has the named neuron as a neighbor
 
 Muscle(name : String) 
 ~~~~~~~~~~~~~~~~~~~~~~
