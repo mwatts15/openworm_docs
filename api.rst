@@ -81,12 +81,13 @@ Return the lineage name. Multiplicity may result from developmental differences
 Example::
 
     c = Cell(name="ADAL")
-    c.lineageName() # Returns ["AB plapaaaapp"]
+    c.lineageName() # Returns ["AB plapaaaapp"]    c.divisionVolume() # Returns a Quantity representing the volume of AB plapaaaap 
+Cell(lineageName="AB plapaaaa")]
 
 Cell.parentOf() : ListOf(Cell)
 ++++++++++++++++++++++++++++++++
 
-Return the direct children of the cell
+Return the direct children of the cell in terms of developmental lineage.
 
 Example::
 
@@ -96,22 +97,21 @@ Example::
 Cell.daughterOf() : ListOf(Cell)
 ++++++++++++++++++++++++++++++++++
 
-Return the parent(s) of the cell. Multiplicity may result from uncertainty
+Return the parent(s) of the cell in terms of developmental lineage.  
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
-    c.daughterOf() # Returns [Cell(lineageName="AB plapaaaa")]
+    c.daughterOf() # Returns [
 
 Cell.divisionVolume() : Quantity
 ++++++++++++++++++++++++++++++++++++++
 
-Return the volume of the cell at division
+Return the volume of the cell at division during development
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
-    c.divisionVolume() # Returns a Quantity representing the volume of AB plapaaaap 
 
 Cell.divisionVolume(volume : Quantity) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -138,17 +138,17 @@ A subclass of Cell
 Neuron.connection() : ListOf(Connection)
 +++++++++++++++++++++++++++++++++++++++++++
 
-Get a set of Connection objects describing synapses between this neuron and others
+Get a set of Connection objects describing synapses or gap junctions between this neuron and others
 
 Neuron.neighbor() : ListOf(Neuron)
 +++++++++++++++++++++++++++++++++++
 
 Get the neighboring Neurons
 
-Neuron.neighbor(neuronName : String) : Relationship
+Neuron.neighbor(neuronName : String) : Connection
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Get the statement that the neuron has the named neuron as a neighbor
+Get the Connection object that defines that the neuron has the named neuron argument as a neighbor
 
 Muscle(name : String) 
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -167,22 +167,23 @@ Get a list of neurons that synapse on this muscle cell
 Muscle.innervatedBy(n : Neuron) : Relationship
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-State that the muscle is innervated by n
-
-Signaling(sender : Population, receiver : Population, messengerSpecies : Object )
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Signaling.sender() : Population
-+++++++++++++++++++++++++++++++++++++
-
-Signaling.receiver() : Population
-+++++++++++++++++++++++++++++++++++++
-
-Signaling.messengerSpecies() : Object
-+++++++++++++++++++++++++++++++++++++
+State that the muscle is innervated by n and return the Relationship object that captures that.
 
 Population : SetOf(Cell)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Any group of cells.
+
+Worm.filterCells(prop1 : String, prop2 : String) : Population
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Allows for groups of cells to be created based on shared properties including neurotransmitter, anatomical location or region, cell type.  
+
+Example::
+    p1 = Worm.filterCells("Glutamate", "neurotransmitter")
+    p2 = Worm.filterCells("Muscle", "DL")
+    p3 = Worm.filterCells("Neurons", "nerve ring")
+
 
 Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : {'gap junction', 'synapse'} ] )
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,20 +193,20 @@ A representation of the connection between neurons. Either a gap junction or a c
 Connection.type() : {'gap junction', 'synapse'}
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Returns the type of connection: 'gap junction' or 'synapse'
+Returns the type of connection: 'gap junction' or 'synapse' as a String
 
 Connection.type({'gap junction', 'synapse'}) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Returns the type of connection: 'gap junction' or 'synapse'
+Returns the type of connection: 'gap junction' or 'synapse' as a Relationship
 
-Connection.neurotransmitter() : Neurotransmitter
+Connection.neurotransmitter() : String
 +++++++++++++++++++++++++++++++++++++++++++++++++
-Returns the type of neurotransmitter used in the connection
+Returns the type of neurotransmitter used in the connection as a String
 
 Connection.strength() : Integer
 ++++++++++++++++++++++++++++++++
-Returns the connection strength, the number of synapses made between the neurons
+Returns the connection strength, the number of synapses and / or gap junctions made between the neurons
 
 NeuroML
 ~~~~~~~~
@@ -223,5 +224,5 @@ NeuroML.write(document : neuroml.NeuroMLDocument, filename : String)
 
 Write out a NeuroMLDocument
 
-Simulation
+
 
