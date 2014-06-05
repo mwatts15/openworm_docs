@@ -24,7 +24,16 @@ Worm()
 
 A representation of the whole worm
 
-Worm.fi
+Worm.filterCells(prop1 : String, prop2 : String) : Population
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Allows for groups of cells to be created based on shared properties including neurotransmitter, anatomical location or region, cell type.  
+
+Example::
+    p1 = Worm.filterCells("Glutamate", "neurotransmitter")
+    p2 = Worm.filterCells("Muscle", "DL")
+    p3 = Worm.filterCells("Neurons", "nerve ring")
+
 
 Evidence(bibtex : BibtexEntry)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,7 +104,7 @@ Example::
 Cell.parentOf() : ListOf(Cell)
 ++++++++++++++++++++++++++++++++
 
-Return the direct daughters of the cell
+Return the direct daughters of the cell in terms of developmental lineage.
 
 Example::
 
@@ -105,22 +114,22 @@ Example::
 Cell.daughterOf() : ListOf(Cell)
 ++++++++++++++++++++++++++++++++++
 
-Return the parent(s) of the cell. Multiplicity may result from uncertainty
+Return the parent(s) of the cell in terms of developmental lineage.  
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
     c.daughterOf() # Returns [Cell(lineageName="AB plapaaaa")]
 
+
 Cell.divisionVolume() : Quantity
 ++++++++++++++++++++++++++++++++++++++
 
-Return the volume of the cell at division
+Return the volume of the cell at division during development
 
 Example::
 
     c = Cell(lineageName="AB plapaaaap")
-    c.divisionVolume() # Returns a Quantity representing the volume of AB plapaaaap 
 
 Cell.divisionVolume(volume : Quantity) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -147,7 +156,7 @@ A subclass of Cell
 Neuron.connection() : ListOf(Connection)
 +++++++++++++++++++++++++++++++++++++++++++
 
-Get a set of Connection objects describing synapses between this neuron and others
+Get a set of Connection objects describing chemical synapses or gap junctions between this neuron and others
 
 Neuron.neighbor() : ListOf(Neuron)
 +++++++++++++++++++++++++++++++++++
@@ -176,15 +185,14 @@ Get a list of neurons that synapse on this muscle cell
 Muscle.innervatedBy(n : Neuron) : Relationship
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-State that the muscle is innervated by n
+State that the muscle is innervated by n and return the Relationship object that captures that.
 
 Signaling(sender : Population, receiver : Population, messengerSpecies : Object)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A signalling Relationship between sender and receiver Populations
 
-Signaling.sender() : Population
-+++++++++++++++++++++++++++++++++++++
+Any group of cells.
 
 Get the sending population in this signalling relationship
 
@@ -205,7 +213,6 @@ A network of Neurons. `see current API`
 
 Population : SetOf(Cell)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 A collection of cells
 
 Example::
@@ -221,20 +228,20 @@ A representation of the connection between neurons. Either a gap junction or a c
 Connection.type() : {'gap junction', 'synapse'}
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Returns the type of connection: 'gap junction' or 'synapse'
+Returns the type of connection: 'gap junction' or 'synapse' as a String
 
 Connection.type({'gap junction', 'synapse'}) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Statements 
+State that the connection is a gap junction/chemical synapse
 
-Connection.neurotransmitter() : Neurotransmitter
+Connection.neurotransmitter() : String
 +++++++++++++++++++++++++++++++++++++++++++++++++
-Returns the type of neurotransmitter used in the connection
+Returns the type of neurotransmitter used in the connection as a String
 
 Connection.strength() : Integer
 ++++++++++++++++++++++++++++++++
-Returns the connection strength, the number of synapses made between the neurons
+Returns the connection strength, the number of synapses and / or gap junctions made between the neurons
 
 NeuroML
 ~~~~~~~~
@@ -242,10 +249,13 @@ NeuroML
 A utility for generating NeuroML files from other objects. The semantics described `above <#draft-api>`__ do not apply here.
 
 NeuroML.generate(object : {Neuron, IonChannel}, type : {0,1,2}) : neuroml.NeuroMLDocument
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Get a NeuroML object that represents the given object. The ``type`` determines what content is included in the NeuroML object:
-0=full morphology+biophysics, 1=cell body only+biophysics, 2=full morphology only
+
+- 0=full morphology+biophysics 
+- 1=cell body only+biophysics
+- 2=full morphology only
 
 NeuroML.write(document : neuroml.NeuroMLDocument, filename : String) 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -254,4 +264,3 @@ Write out a NeuroMLDocument
 
 IonChannel
 ~~~~~~~~~~~~
-
