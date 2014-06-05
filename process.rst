@@ -2,7 +2,9 @@
 
 Requirements for data storage in OpenWorm
 =========================================
-Our OpenWorm database captures facts about C. `elegans`. The database stores data for generating model files and together with annotations describing the origins of the data. Below are a set of recomendations for implementation of the database organized around an RDF model.
+Our OpenWorm database captures facts about C. `elegans`. The database stores data for generating model files and together with annotations describing the origins of the data. Below are a set of recommendations for implementation of the database organized around an RDF model.
+
+Updating the data model 
 
 Why RDF?
 ---------
@@ -47,7 +49,6 @@ Information assurance
 Reasoning
 ~~~~~~~~~
 To make full use of RDF storage it's recommended to leverage reasoning over our stored data. Encoding rules for the worm requires a good knowledge of both C. elegans and the database schema. More research needs to be done on this going forward. Preliminarily, SPIN, a constraint notation system based on SPARQL looks like a good candidate for `specifying` rules, but an inference engine for `enforcing` the rules still needs to be found.
-
 
 Input validation
 ~~~~~~~~~~~~~~~~
