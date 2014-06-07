@@ -3,18 +3,17 @@
 Draft Updates and Modifications to the PyOpenWorm API
 ------------------------------------------------------
 
-
 This API will augment the existing API of `PyOpenWorm <https://github.com/openworm/PyOpenWorm/>`_, which is centered around a simple means of accessing data about the C. elegans using an object model that is based on its anatomy.  In particular it is for making statements about biological entities in the worm or querying previously made statements. In addition, statements concerning the evidence for statements (called relationships below).
 
-Many of these new API calls are designed around the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()`` (the Query form) will query ``$a $B ?x`` against the database, where ``$a`` and ``$B`` signify identifiers associated with ``a`` and ``B``; on the other hand, ``a.B(c)`` (the Update form) will return a triple from the database, adding it if it isn't already there. However, this is `only` to give an intuition -- for instance, insertions may be refused where they contradict some facts, and the objects returned from either the Query or Update forms may be complex objects.
+Many of these new API calls are designed around the principle that most statements correspond to some action on the database. Some of these actions may be complex, but intuitively ``a.B()``, the Query form, will query against the database for the value or values that are related to ``a`` through ``B``; on the other hand, ``a.B(c)``, the Update form, will add a statement to the database that ``a`` relates to ``c`` through ``B``. For the Update form, a Relationship object describing the relationship stated is returned as a side-effect of the update.
 
-
+Relationship objects are key to the `Evidence class <#evidence>`_ for making statements which can be sourced. Relationships can themselves be members in a relationship, allowing for fairly complex statements to be made about entities.
 
 Notes
 
 - Of course, when these methods communicate with an external database, they may fail due to the database being unavailable and the user should be notified if a connection cannot be established in a reasonable time. Also, some objects are created by querying the database; these may be made out-of-date in that case.
 - Some terms may be unexplained
-- ``a : {x_0,...,x_n}`` means a could have the value of any one of ``x_0`` through ``x_n``
+- ``a : {x_0,...,x_n}`` means ``a`` could have the value of any one of ``x_0`` through ``x_n``
 
 Worm()
 ~~~~~~~~
@@ -27,17 +26,24 @@ Worm.filterCells(prop1 : String, prop2 : String) : Population
 Allows for groups of cells to be created based on shared properties including neurotransmitter, anatomical location or region, cell type.  
 
 Example::
+
     p1 = Worm.filterCells("Glutamate", "neurotransmitter")
     p2 = Worm.filterCells("Muscle", "DL")
     p3 = Worm.filterCells("Neurons", "nerve ring")
 
 
-Evidence(bibtex : BibtexEntry)
+.. _evidence:
+
+Evidence(`key`=`value`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A representation of some document which provides evidence for something.  
+A representation of some document which provides evidence for something. Possible keys include::
+    
+    pmid,pubmed: a pubmed id or url (e.g., 24098140)
+    wbid,wormbase: a wormbase id or url (e.g., WBPaper00044287)
+    doi: a Digitial Object id or url (e.g., s00454-010-9273-0)
 
-Evidence.asserts(relationship : Relationship)
+Evidence.asserts(relationship : Relationship) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 State that the Evidence asserts that relationship is true.
@@ -61,8 +67,8 @@ Example::
     e = Evidence(bibtex=bt['white86'])
     e.asserts(r)
 
-Evidence.asserts()
-++++++++++++++++++
+Evidence.asserts() : ListOf(Relationship)
++++++++++++++++++++++++++++++++++++++++++++
 
 Returns a sequence of statements asserted by this evidence
 
@@ -77,19 +83,23 @@ Example::
     e.asserts(c)
     list(e.asserts()) # Returns a list [..., d, ...] such that d==c
 
-Relationship()
-~~~~~~~~~~~~~~
+Relationship
+~~~~~~~~~~~~~
 
-A relationship between
+Abstract class. A relationship between two entities. 
+
+Relationship.pull(class : python class, method_name : String) : SetOf(Relationship)
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Returns a set of Relationship objects associated with the call ``class.method_name()``
 
 Cell(name : String)
 ~~~~~~~~~~~~~~~~~~~
 
 A biological cell
 
-
 Cell.lineageName() : String
-++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++
 
 Return the lineage name. Multiplicity may result from developmental differences
 
@@ -142,8 +152,12 @@ Example::
 Cell.morphology() : Morphology
 +++++++++++++++++++++++++++++++++++
 
-Return the morphology of the cell
+Return the morphology of the cell. Currently this is restricted to `Neuron <#neuron>`_ objects.
 
+Morphology = neuroml.Morphology
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Physical cell structure
 
 Neuron(name : String)
 ~~~~~~~~~~~~~~~~~~~~~
@@ -167,12 +181,17 @@ State that neuronName is a neighbor of this Neuron
 
 Muscle(name : String) 
 ~~~~~~~~~~~~~~~~~~~~~~
-A representation of a muscle cell. `See also current API`
+A representation of a muscle cell. `See also: current API`
 
 Muscle.receptor() : ListOf(Receptor)
 ++++++++++++++++++++++++++++++++++++++
 
 Get a list of receptors for this muscle
+
+Muscle.receptor(receptor : Receptor) : Relationship
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+State that this muscle has the given receptor type
 
 Muscle.innervatedBy() : ListOf(Neuron)
 ++++++++++++++++++++++++++++++++++++++++
@@ -184,31 +203,15 @@ Muscle.innervatedBy(n : Neuron) : Relationship
 
 State that the muscle is innervated by n and return the Relationship object that captures that.
 
-Signaling(sender : Population, receiver : Population, messengerSpecies : Object)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A signalling Relationship between sender and receiver Populations
-
-Any group of cells.
-
-Get the sending population in this signalling relationship
-
-Signaling.receiver() : Population
-+++++++++++++++++++++++++++++++++++++
-
-Get the receiving population in this signalling relationship
-
-Signaling.messengerSpecies() : Object
-+++++++++++++++++++++++++++++++++++++
-
-Get the species transmitted in this signalling relationship
+Receptor = String
+~~~~~~~~~~~~~~~~~
 
 Network()
 ~~~~~~~~~~
 
 A network of Neurons. `see current API`
 
-Population : SetOf(Cell)
+Population = SetOf(Cell)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 A collection of cells
 
@@ -217,17 +220,17 @@ Example::
     ns = Network.neurons()
     set(ns) # a Population
 
-Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : {'gap junction', 'synapse'} ] )
+Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : ConnectionType ] )
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A representation of the connection between neurons. Either a gap junction or a chemical synapse
 
-Connection.type() : {'gap junction', 'synapse'}
+Connection.type() : ConnectionType
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Returns the type of connection: 'gap junction' or 'synapse' as a String
 
-Connection.type({'gap junction', 'synapse'}) : Relationship
+Connection.type(type : ConnectionType) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 State that the connection is a gap junction/chemical synapse
@@ -240,13 +243,16 @@ Connection.strength() : Integer
 ++++++++++++++++++++++++++++++++
 Returns the connection strength, the number of synapses and / or gap junctions made between the neurons
 
-NeuroML
-~~~~~~~~
+ConnectionType = {'gap junction', 'synapse'}
++++++++++++++++++++++++++++++++++++++++++++++
+
+NeuroML()
+~~~~~~~~~~
 
 A utility for generating NeuroML files from other objects. The semantics described `above <#draft-api>`__ do not apply here.
 
-NeuroML.generate(object : {Neuron, IonChannel}, type : {0,1,2}) : neuroml.NeuroMLDocument
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+NeuroML.generate(object : {Network, Neuron, IonChannel}, type : {0,1,2}) : neuroml.NeuroMLDocument
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Get a NeuroML object that represents the given object. The ``type`` determines what content is included in the NeuroML object:
 
@@ -258,6 +264,3 @@ NeuroML.write(document : neuroml.NeuroMLDocument, filename : String)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Write out a NeuroMLDocument
-
-IonChannel
-~~~~~~~~~~~~
