@@ -20,17 +20,15 @@ Worm()
 
 A representation of the whole worm
 
-Worm.filterCells(prop1 : String, prop2 : String) : Population
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Worm.network() : Network
++++++++++++++++++++++++++++
 
-Allows for groups of cells to be created based on shared properties including neurotransmitter, anatomical location or region, cell type.  
+Return the neuron Network of the worm
 
-Example::
+Worm.cells() : Population
++++++++++++++++++++++++++++
 
-    p1 = Worm.filterCells("Glutamate", "neurotransmitter")
-    p2 = Worm.filterCells("Muscle", "DL")
-    p3 = Worm.filterCells("Neurons", "nerve ring")
-
+Return the Population of all cells in the worm
 
 .. _evidence:
 
@@ -98,8 +96,8 @@ Cell(name : String)
 
 A biological cell
 
-Cell.lineageName() : String
-++++++++++++++++++++++++++++
+Cell.lineageName() : ListOf(String)
++++++++++++++++++++++++++++++++++++++++++++
 
 Return the lineage name. Multiplicity may result from developmental differences
 
@@ -107,6 +105,17 @@ Example::
 
     c = Cell(name="ADAL")
     c.lineageName() # Returns ["AB plapaaaapp"]
+
+Cell.blast() : String
+++++++++++++++++++++++++++++
+
+Return the blast name.
+
+Example::
+
+    c = Cell(name="ADAL")
+    c.blast() # Returns "AB"
+
 
 Cell.parentOf() : ListOf(Cell)
 ++++++++++++++++++++++++++++++++
@@ -211,14 +220,19 @@ Network()
 
 A network of Neurons. `see current API`
 
-Population = SetOf(Cell)
+Population()
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-A collection of cells
+A collection of cells. Constructor creates an empty population.
+
+Population.filterCells(filters : ListOf(PairOf(unboundMethod, methodArgument))) : Population
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Allows for groups of cells to be created based on shared properties including neurotransmitter, anatomical location or region, cell type.  
 
 Example::
 
-    ns = Network.neurons()
-    set(ns) # a Population
+    p = Worm.cells()
+    p1 = p.filterCells([(Cell.lineageName, "AB")]) # A population of cells with AB as the blast cell 
 
 Connection(pre : Neuron, post : Neuron, [strength : Integer, ntrans : Neurotransmitter, type : ConnectionType ] )
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
