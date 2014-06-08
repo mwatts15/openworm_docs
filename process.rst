@@ -57,7 +57,7 @@ Input validation is to be handled through the interface library referenced `abov
 
 Provenance
 ~~~~~~~~~~
-As stated in the opening paragraph tracking the origins of our data demands a method of annotating statements in our database. A technique in RDF called reification allows us to annotate arbitrary facts in our database with additional information. This technique allows for the addition of structured citation data to facts in the database as well as annotations for tracking responsibility for uploads to the database. Further details for the attachment of evidence using this technique are given in the `draft api <api>`_.
+As stated in the opening paragraph, tracking the origins of facts stated in the database demands a method of annotating statements in our database. Providing citations for facts must be as simple as providing a global identifier (e.g., URI, DOI) or a local identifier (e.g., Bibtex identifier, Pubmed ID). A technique called RDF reification allows us to annotate arbitrary facts in our database with additional information. This technique allows for the addition of structured citation data to facts in the database as well as annotations for tracking responsibility for uploads to the database. Further details for the attachment of evidence using this technique are given in the `draft api <api>`_.
 
 In line with current practices for communication through the source code management platform, Github, we would like to track responsibility for new uploads to the database. Two methods are proposed for tracking this information: RDF named graphs and RDF reification. Tracking information must include, at least, a time-stamp on the update and linking of the submitted data to the uploader's unique identifier (e.g., email address). Named graphs have the advantage of wide support for the use of tracking uploads. The choice between these depends largely the support of the chosen data store for named graphs.
 
@@ -65,16 +65,11 @@ Access control
 ~~~~~~~~~~~~~~~~~
 Write access to data in the project has been inconsistent between various data sources in the project. Going forward, write access to OpenWorm databases should be restricted to authenticated users to forestall the possibility of malicious tampering. 
 
-Tracking research
-++++++++++++++++++
-The proposed database stores facts about C. elegans which have been previously researched and documented elsewhere. Providing citations for these facts must be as simple as providing a global identifier (e.g., URI, DOI) or a local identifier (e.g., Bibtex identifier, Pubmed ID). Details of this for achieving this goal are provided in the `draft api <api>`_.
-
 Storage options
 ~~~~~~~~~~~~~~~
 
 Physical storage
 +++++++++++++++++++
-The storage needs are fairly limited in terms of access requirements. In the near term, I expect any well managed storage option would suit us well.
 
 Candidates:
 
@@ -83,7 +78,6 @@ Candidates:
 - Linode?
 - Other?
 - annual pricing?
-
 
 Availability
 ++++++++++++++
