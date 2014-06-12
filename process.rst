@@ -86,6 +86,8 @@ A concern for OpenWorm as a project designed for wide dissemination of knowledge
 Store software
 ++++++++++++++++++
 
+For the time being, OpenRDF Sesame's memory store will serve as the storage for the project. Other store softwares are being evaluated.
+
 Testing:
 
 - OpenRDF Sesame
@@ -98,7 +100,7 @@ Testing:
     - Uses Openrdf Sesame interface 
     - OWL & RDFS reasoning
 
-Not Evaluated:
+Not Yet Evaluated:
 
 - Apache Jena TDB
     - Free, open source
@@ -116,4 +118,3 @@ Miscellaneous
 Versioning
 ~~~~~~~~~~
 Experimental methods are constantly improving in biological research. These improvements may require updating the data we reference or store internally. However, in making updates we must not immediately expunge older content, breaking links created by internal and external agents. Ideally we would have a means of deprecating old data and specifying replacements. On the level of single resources, this is a trivial mapping which may be done transparently to all readers. For a more significant change, altering the schema, human intervention may be required to update external readers.
-

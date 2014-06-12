@@ -20,7 +20,7 @@ Worm()
 
 A representation of the whole worm
 
-Worm.network() : Network
+Worm.neuron_network() : Network
 +++++++++++++++++++++++++++
 
 Return the neuron Network of the worm
@@ -44,7 +44,7 @@ A representation of some document which provides evidence for something. Possibl
 Evidence.asserts(relationship : Relationship) : Relationship
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-State that the Evidence asserts that relationship is true.
+State that this Evidence asserts that the relationship is true.
 
 Example::
 
@@ -80,6 +80,11 @@ Example::
     e = Evidence(bibtex=bt['white86'])
     e.asserts(c)
     list(e.asserts()) # Returns a list [..., d, ...] such that d==c
+
+Evidence.author() : ListOf(String)
+++++++++++++++++++++++++++++++++++
+
+Returns a list of author names
 
 Relationship
 ~~~~~~~~~~~~~
