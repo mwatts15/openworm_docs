@@ -6,7 +6,7 @@ Our OpenWorm database captures facts about C. `elegans`. The database stores dat
 
 Why RDF?
 ---------
-RDF offers advantages in resilience to schema additions and increased flexibility in integrating data from disparate sources. [1]_ These qualities can be valued by comparison to relational database systems. Typically, schema changes in relational a database require extensive work for applications using it. [2]_ In the author's experience, RDF databases offer more freedom in restructuring. For data integration, SPARQL, the standard language for querying over RDF has `Federated queries <http://www.w3.org/TR/sparql11-federated-query/>`_ which allow for nearly painless integration of external SPARQL endpoints with existing queries.
+RDF offers advantages in resilience to schema additions and increased flexibility in integrating data from disparate sources. [1]_ These qualities can be valued by comparison to relational database systems. Typically, schema changes in a relational database require extensive work for applications using it. [2]_ In the author's experience, RDF databases offer more freedom in restructuring. Also, for data integration, SPARQL, the standard language for querying over RDF has `Federated queries <http://www.w3.org/TR/sparql11-federated-query/>`_ which allow for nearly painless integration of external SPARQL endpoints with existing queries.
 
 .. [1] http://answers.semanticweb.com/questions/19183/advantages-of-rdf-over-relational-databases
 .. [2] http://research.microsoft.com/pubs/118211/andy%20maule%20-%20thesis.pdf
@@ -18,7 +18,7 @@ Access is through a Python library which communicates with the database. This li
 
 Data modelling
 --------------
-Biophysical and anatomical data are included in the database. A sketch of some proposed features of the data model is below. Also included in our model are the relationships between these types. Given our choice of data types, we do not model the individual interactions between cells as entities in the database. Rather these are described by generic predicates in an `RDF triple <http://stackoverflow.com/a/1122451>`__. For instance, neuron A synapsing with muscle cell B would give a statement (A, synapsesWith, B), but A synapsing with neuron C would also have (A, synapsesWith, C). Data which belong to the specific relationship between two nodes is attached to an `rdf:Statement object <http://www.w3.org/TR/rdf-schema/#ch_statement>`__ which points to the statement.
+Biophysical and anatomical data are included in the database. A sketch of some proposed features of the data model is below. Also included in our model are the relationships between these types. Given our choice of data types, we do not model the individual interactions between cells as entities in the database. Rather these are described by generic predicates in an `RDF triple <http://stackoverflow.com/a/1122451>`__. For instance, neuron A synapsing with muscle cell B would give a statement (A, synapsesWith, B), but A synapsing with neuron C would also have (A, synapsesWith, C). Data which belong to the specific relationship between two nodes is attached to an `rdf:Statement object <http://www.w3.org/TR/rdf-schema/#ch_statement>`__ which points to the statement. This choice is intended to easy querying and extension later on.
 
 Nervous system
 ~~~~~~~~~~~~~~
@@ -28,7 +28,7 @@ In the worm's nervous system, we capture a few important data types (listed `bel
 
 Data types
 ++++++++++
-A non-exhaustive list of data types in our C. elegans database
+A non-exhaustive list of neurological data types in our C. elegans database:
 
 - receptor types identified in the nerve cell
 - neurons
@@ -72,12 +72,19 @@ Physical storage
 +++++++++++++++++++
 
 Candidates:
+Considering main memory necessary for joins.
 
-- Amazon EC2?
-- DigitalOcean?
-- Linode?
-- Other?
-- annual pricing?
+- DigitalOcean (Currently used)
+  - Pricing: $.03 per hour of usage - capped at 5/month.
+  - Storage capacity: 20GB
+  - Data transfer: 1TB
+  - Main memory: 1 GB
+  - Other plans here: https://www.digitalocean.com/pricing/
+- Amazon EC2
+  - Pricing: ???
+  - Scalable service
+- Linode
+  - Pricing: $.03 per/hour of usage - capped at $20/month.
 
 Availability
 ++++++++++++++
